@@ -23,7 +23,7 @@ main {
 .grid-container {
     height: 500px;
     width: 500px;
-    border: 1px solid white;
+    border: 1px solid black;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -34,8 +34,7 @@ main {
 .grid-square {
     width: calc(100% / 10);
     height: calc(100% / 10);
-    border: 1px solid white;
-    color: white;
+    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,6 +42,14 @@ main {
 
 .grid-square.active {
     background-color: cornflowerblue;
+}
+
+.grid-square.clicked {
+    background-color: red;
+}
+
+.hidden {
+    display: none;
 }
 
 /* FOOTER */
