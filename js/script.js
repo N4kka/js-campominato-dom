@@ -26,8 +26,11 @@ function startGame() {
         cellsNuberInRow = 7;
     }
 
-    const bombNumbers = 16;
-    const bombsArray = generateBombsNumbers (bombNumbers, cellNumber);
+    const bombsNumbers = 16;
+    const bombsArray = generateBombsNumbers (bombsNumbers, cellNumber);
+    console.log(bombsArray);
+    const safeCells = [];
+    const winNumbers = cellNumber - bombsNumbers;
 
     // Generate cells from 1 to 100
     for (let i = 1; i <= cellNumber; i++) {
@@ -38,56 +41,86 @@ function startGame() {
         // append the cell to the container
         grid.append(newItem);
     }
-}
 
-/** 
- * Description: The function for the cornflower color
- * No return
- */
-function handleCellClick() {
-    this.classList.add("active");
-}
 
-/**
- * Description: Generate a cell in the grid on HTML with this function
- * @param {any} gridNumber -> number in the cell
- * @param {any} cellsInRow -> number of cells in a row
- * @returns {any} -> DOM element who represents the cell in the grid
- */
-function generateGridItem(gridNumber, cellsInRow) {
-    // Create an html element
-    const gridItem = document.createElement("div");
-    // add the class "grid-item"
-    gridItem.classList.add("grid-square");
-    // setting the size of the cells;
-    gridItem.style.width = `calc(100% / ${cellsInRow})`;
-    gridItem.style.height = `calc(100% / ${cellsInRow})`;
-    // add the span with the number 
-    gridItem.innerHTML = `<span>${gridNumber}</span>`
+    /** 
+     * Description: The function for the cornflower color
+     * No return
+     */
+    function handleCellClick() {
+        const selectedNumber = parseInt(this.querySelector("span").textContent);
 
-    return gridItem;
-}
+        if ( bombsArray.includes(selectedNumber) ) {
+            this.classList.add("clicked")
 
-/**
- * Description: Generate random non-repetead number from 1 to 16 with this function
- * @param {Number} numberQuantity --> number of elements to be generated
- * @param {Number} maxLimit --> max numbers in the grid = cellNumber
- * @returns {Array} --> array of random non-repetead numbers
- */
-function generateBombsNumbers (numberQuantity, maxLimit) {
-    const numbersArray = [];
-    while (numbersArray.length < 16) {
-       const randomNumber = getRndInteger(1, maxLimit);
-       if ( !numbersArray.includes(randomNumber) ) {
-           numbersArray.push(randomNumber);
-       }
+            endGame (safeCells.length, "lose");
+        } else {
+            this.classList.add("active")
+
+            safeCells.push(selectedNumber);
+            
+            if (safeCells.length >=winNumbers) {
+                endGame (safeCells.length, "win");
+            }
+        }
     }
-    console.log(numbersArray);
+
+    /**
+     * Description: Generate a cell in the grid on HTML with this function
+     * @param {any} gridNumber -> number in the cell
+     * @param {any} cellsInRow -> number of cells in a row
+     * @returns {any} -> DOM element who represents the cell in the grid
+     */
+    function generateGridItem(gridNumber, cellsInRow) {
+        // Create an html element
+        const gridItem = document.createElement("div");
+        // add the class "grid-item"
+        gridItem.classList.add("grid-square");
+        // setting the size of the cells;
+        gridItem.style.width = `calc(100% / ${cellsInRow})`;
+        gridItem.style.height = `calc(100% / ${cellsInRow})`;
+        // add the span with the number 
+        gridItem.innerHTML = `<span>${gridNumber}</span>`
+
+        return gridItem;
+    }
+
+    function getRndInteger(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) ) + min;
+    }
+
+    /**
+     * Description: Generate random non-repetead number from 1 to 16 with this function
+     * @param {Number} numberQuantity --> number of elements to be generated
+     * @param {Number} maxLimit --> max numbers in the grid = cellNumber
+     * @returns {Array} --> array of random non-repetead numbers
+     */
+    function generateBombsNumbers (numberQuantity, maxLimit) {
+        const numbersArray = [];
+        while (numbersArray.length < numberQuantity) {
+        const randomNumber = getRndInteger(1, maxLimit);
+        if ( !numbersArray.includes(randomNumber) ) {
+            numbersArray.push(randomNumber);
+        }
+        }
+        return numbersArray;
+    }
+
+    
+    // **
+    //  * Description: The result will be displayed with this function
+    //  * @param {any} safeNumbersQuantity --> max number of safe cells
+    //  * @param {any} winLose --> The result
+    //  * @returns {any}
+    function endGame (safeNumbersQuantity, winLose) {
+        const resultTitle = document.getElementById("result");
+        let resultMessage;
+        if (winLose === "lose") {
+            resultMessage = `Hai perso! Hai totalizzato un punteggio di ${safeNumbersQuantity}`;
+        } else {
+            resultMessage = "Complimenti! Hai vinto, sei un mostro!"
+        }
+        resultTitle.innerHTML = resultMessage;
+        resultTitle.classList.remove("hidden");
+    }
 }
-
-function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
-  }
-
-//TEST
-const generatedArray = generateBombsNumbers(5, 5);
